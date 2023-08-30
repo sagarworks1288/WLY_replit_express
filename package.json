@@ -1,13 +1,11 @@
 {
-  "name": "Estate",
+  "name": "WLY",
   "version": "1.0.0",
   "description": "Hello World!",
   "main": "boot.js",
-  "author": "Jane Doe",
+  "author": "sagarworks1288",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^22.0.2",
-    "electron-builder": "^23.6.0",
     "eslint": "^8.48.0"
   },
   "scripts": {
@@ -16,20 +14,20 @@
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
     "lint": "eslint .",
-    "fix": "eslint . --fix"
+    "fix": "eslint ./application --fix"
   },
   "dependencies": {
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "ejs": "^3.1.8",
     "express": "^4.18.2",
     "formidable": "^2.1.1",
+    "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^9.0.0",
-    "knex": "^2.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
-    "mongodb": "^4.13.0",
     "mongoose": "^7.4.5",
-    "nodemon": "^2.0.20",
-    "sqlite3": "^5.1.4"
+    "node-cron": "^3.0.2",
+    "nodemon": "^2.0.20"
   }
 }

@@ -1,13 +1,15 @@
-let { ObjectId } = require("mongodb");
-let { dateTime, knex, respObj, formParse, formValidator, jwtEncode, auth, mongoDb, dbMode, deleteFile } = require("./helper");
 let _ = require("lodash");
+const AuthHelper = require("../helpers/auth_helper");
+
 module.exports = async function handler(req, res, next) {
-    let authData = auth(req);
-    _.set(req, "auth", authData);
-    if (_.get(authData, "userId", 0) == 0) {
-        let obj = respObj();
-        obj.error = "auth required";
-        return res.status(201).json(obj);
+    try {
+        const auth = await AuthHelper.authUser(req);
+        if(auth===null || _.get(auth,"error",null)!==null){
+            return res.json({ code: 0, error: "invalid auth" }); 
+           
+        }
+        next();
+    } catch (error) {
+        return res.json({ code: 0, error: "invalid auth",code :error.message });
     }
-    next();
 };
