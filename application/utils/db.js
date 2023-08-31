@@ -4,7 +4,7 @@ const Config = require("../../config");
 let cachedConnection = null;
 let cachedRandom = null;
 
-async function connectToDatabase(uri) {
+async function connectToDatabase() {
     if (cachedConnection) {
         console.log("@@@@@@@@@@@","i used cache");
         return cachedConnection;

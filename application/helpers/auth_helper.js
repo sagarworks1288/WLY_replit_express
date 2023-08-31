@@ -1,30 +1,32 @@
 const Jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 const Config = require("../../config");
 const _ = require("lodash");
-const Session = require("../utils/session");
 const UsersModel = require("../models/users_model");
 
-function sessionSet(req, key, value) {
-    const userId = authUserId(req);
-    return Session.set(userId, key, value);
-}
-function sessionGet(req,key) {
-    const userId = authUserId(req);
-    return Session.get(userId, key);
-}
-function sessionGetAll(req,key) {
-    const userId = authUserId(req);
-    return Session.getAll(userId);
-}
 
+
+let Session = {};
+
+function sessionGet(req){
+    const token = authToken(req);
+    const md5 = generateMD5(token);
+    return _.get(Session,[md5],null);
+}
+function sessionSet(req,key,value){
+    const token = authToken(req);
+    const md5 = generateMD5(token);
+    _.set(Session,`['${md5}']['${key}']`,value);
+    return sessionGet(req);
+}
 function authToken(req) {
     try {
         const authHeader = _.get(req, "headers.authorization", "");
         const token = authHeader.split(" ")[1];
         return token;
     } catch (error) {
-        return resolve({ error: error.message });
+        return { error: error.message };
     }
 }
 
@@ -34,28 +36,35 @@ function authUserId(req) {
         const uid = jwtDecode(token);
         return uid;
     } catch (error) {
-        return resolve({ error: error.message });
+        return { error: error.message };
     }
 }
 
-function authUser(req) {
-    return new Promise(async (resolve) => {
-        try {
-            const userId = authUserId(req);
-            let auth = Session.get(userId, "auth");
-            if (auth === null) {
-                const user = await UsersModel.find({
-                    _id: new mongoose.Types.ObjectId(userId),
-                });
-                if (user) {
-                    auth = Session.set(userId, "auth", user);
-                }
+async function authUser(req) {
+    try {
+        const userId = authUserId(req);
+        let sessionAll = sessionGet(req);
+        let auth = _.get(sessionAll, "auth", null);
+
+        if (auth === null) {
+            const user = await UsersModel.findOne({
+                _id: new mongoose.Types.ObjectId(userId),  // Use mongoose.Types.ObjectId to convert userId
+            });
+
+            if (user) {
+                console.log("@@@@@-create-new");
+                sessionAll = sessionSet(req, "auth", user);
+                auth = user;  // Set auth to the user object retrieved from the database
             }
-            return resolve(auth);
-        } catch (error) {
-            return resolve({error:error.message});
+        } else {
+            console.log("@@@@@-use-cache");
         }
-    });
+
+        return auth;
+    } catch (error) {
+        console.error("An error occurred:", error);
+        return null;
+    }
 }
 
 function jwtEncode(content, expiresIn = "10h") {
@@ -79,4 +88,9 @@ function jwtDecode(token) {
     return decode;
 }
 
-module.exports = { jwtEncode, jwtDecode ,authUser,sessionSet,sessionGet,sessionGetAll };
+function generateMD5(text) {
+    const hash = crypto.createHash("md5").update(text).digest("hex");
+    return hash;
+}
+
+module.exports = { jwtEncode, jwtDecode ,authUser,generateMD5,sessionSet,sessionGet };
