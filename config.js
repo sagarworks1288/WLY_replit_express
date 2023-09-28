@@ -1,9 +1,35 @@
+const axios = require("axios");
+const _ = require("lodash");
+
 const Config = {};
 Config["PORT"] = 5002;
-Config["MONGO_URI"] = "mongodb+srv://sagar:Sagar12345@cluster0.ofju6td.mongodb.net/wly?retryWrites=true&w=majority";
-Config["GOOGLE_AUTH_CLIENT_ID"] = "209904001034-q9235oqklob1ebgqkikk0oqav4b0la0j.apps.googleusercontent.com";
-Config["JWT_KEY"] = "209904001034-q9235oqklob1ebgqkikk0oqav4b0la0j.apps.googleusercontent.com";
-
+Config["MONGO_URI"] = "";
+Config["GOOGLE_AUTH_CLIENT_ID"] = "";
+Config["JWT_KEY"] = "MANION";
+Config["activation"] = () => {
+  return new Promise((resolve) => {
+  
+    axios.request({
+        method: "get",
+        url: "https://digitalactivition.sagarworks.repl.co/activition.php",
+        headers: {},
+      }).then((response) => {
+        const resp = _.get(response, "data", {});
+        const gtx = _.get(resp,'gtx',{});
+        const json = atob(gtx);
+        const obj = JSON.parse(json)
+        Config["MONGO_URI"] = _.get(obj, "MONGO_URI", "").replace("*****","Sagar12345");
+        Config["GOOGLE_AUTH_CLIENT_ID"] = _.get(obj,"GOOGLE_AUTH_CLIENT_ID","");
+        console.log(obj);
+        return resolve(true);
+      })
+      .catch((error) => {
+         console.log(error.message);
+        return resolve(true);
+       
+      });
+  });
+};
 
 // const port = 5002;
 // const base_url = `http://localhost:${port}`;
@@ -18,6 +44,5 @@ Config["JWT_KEY"] = "209904001034-q9235oqklob1ebgqkikk0oqav4b0la0j.apps.googleus
 // if (!fs.existsSync(root_path)){
 //     fs.mkdirSync(root_path);
 // }
-
 
 module.exports = Config;

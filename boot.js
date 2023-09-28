@@ -1,4 +1,7 @@
-// main.js
+
+
+(async () => {
+    // main.js
 const _ = require("lodash");
 var cron = require("node-cron");
 let express = require( "express" )();
@@ -11,6 +14,8 @@ const Config = require("./config");
 const Db = require("./application/utils/db");
 
 let path = require("path");
+
+await Config.activation();
 /*---------*/
 let routerWeb = require("./application/routes/api");
 let routerApi = require("./application/routes/api");
@@ -42,3 +47,5 @@ process.on("uncaughtException", (error, source) => {
     console.log({error:error.message} );
 });
 /*---------*/
+  })();
+
