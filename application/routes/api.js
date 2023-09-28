@@ -11,7 +11,7 @@ router.get( "/", ClientHomeController.index);
 router.get( "/test", ClientHomeController.test);
 router.post( "/client/sign-up", ClientAuthController.signUp);
 router.post( "/client/auth",AuthMiddleware, ClientAuthController.auth);
-router.post( "/client/users",AuthMiddleware, ClientUsersController.list);
+router.post( "/client/users-list",AuthMiddleware, ClientUsersController.list);
 router.post( "/client/profile",AuthMiddleware, ClientAuthController.profile);
 router.post( "/client/upload-file",AuthMiddleware, ClientAuthController.uploadFile);
 
