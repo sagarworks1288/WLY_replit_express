@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
-const collection = "users";
+const collection = "states";
 const scema = {
   name: String,
-  email: String,
-  locationId: { type: mongoose.Schema.ObjectId, default: null },
+  countryId: { type: mongoose.Schema.ObjectId, default: null },
 };
 module.exports =
   mongoose.models[collection] || mongoose.model(collection, scema);

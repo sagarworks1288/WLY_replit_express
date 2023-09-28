@@ -18,8 +18,8 @@ let routerApi = require("./application/routes/api");
 /*---------*/
 express.use(expapp.static("public"));
 express.use(cors());
-const timeoutDuration = 10000; // 10 seconds
-express.use(timeout(timeoutDuration));
+// const timeoutDuration = 10000; // 10 seconds
+// express.use(timeout(timeoutDuration));
 express.use(bodyParser.json());
 // express.use("/", routerWeb);
 express.use("/api", routerApi);
